@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sandy (Seoyeon) Tai | Data Analyst</title>
+<meta name="description" content="Portfolio of Sandy (Seoyeon) Tai, a data analyst with an M.S. in Business Analytics from Columbia University.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f8f6f1;
+    --paper2:#f1eee7;
+    --ink:#1c2130;
+    --ink2:#575b6b;
+    --muted:#8f92a0;
+    --line:rgba(31,42,68,.13);
+    --navy:#1f2a44;
+    --navy2:#4a5b85;
+    --navy-rgb:31,42,68;
+    --vermilion:#c8643c;
+    --verm-rgb:200,100,60;
+    --serif:'Fraunces',Georgia,serif;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);font-weight:300;background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  ::selection{background:var(--navy);color:#fff}
+  a{color:inherit}
+  .wrap{max-width:880px;margin:0 auto;padding:0 28px}
+
+  /* ---------- nav ---------- */
+  nav{position:fixed;top:12px;left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:1120px;z-index:80;
+    background:rgba(248,246,241,.8);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--line);border-radius:5px}
+  nav .in{display:flex;align-items:center;justify-content:space-between;height:52px;padding:0 24px}
+  .brand{font-size:13px;font-weight:400;letter-spacing:.2em;text-transform:uppercase;text-decoration:none}
+  .navlinks{display:flex;gap:28px}
+  .navlinks a{font-size:11.5px;font-weight:400;letter-spacing:.16em;text-transform:uppercase;color:var(--ink2);text-decoration:none;transition:color .25s}
+  .navlinks a:hover{color:var(--vermilion)}
+  @media(max-width:560px){.navlinks{gap:16px}.navlinks a{font-size:10.5px;letter-spacing:.1em}.brand{display:none}}
+
+  /* ---------- hero: constellation ---------- */
+  .hero{padding:84px 0 60px;text-align:center;position:relative}
+  .graph{position:relative;width:min(1000px,100%);margin:0 auto;height:520px}
+  @media(max-width:760px){.graph{height:440px}}
+  @media(max-width:520px){.graph{height:380px}}
+  .glow{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none}
+  .glow.g1{width:46%;height:70%;left:27%;top:12%;background:radial-gradient(closest-side,rgba(var(--navy-rgb),.15),transparent)}
+  .glow.g2{width:30%;height:60%;right:2%;top:14%;background:radial-gradient(closest-side,rgba(var(--verm-rgb),.14),transparent)}
+  .glow.g3{width:28%;height:55%;left:0;top:16%;background:radial-gradient(closest-side,rgba(var(--navy-rgb),.07),transparent)}
+  .water{position:absolute;top:1%;font-family:var(--serif);font-weight:400;font-size:clamp(28px,5vw,56px);letter-spacing:-.01em;pointer-events:none;user-select:none}
+  .water.l{left:10%;color:rgba(var(--navy-rgb),.12)}
+  .water.r{right:8%;color:rgba(var(--verm-rgb),.2)}
+  #svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+
+  .edge{fill:none;stroke:rgba(var(--navy-rgb),.2);stroke-width:.6;transition:stroke .35s,stroke-width .35s,opacity .35s}
+  .edge.t{stroke:rgba(var(--verm-rgb),.34)}
+  .edge-hit{fill:none;stroke:transparent;stroke-width:14;cursor:pointer}
+  .edge.hot{stroke:rgba(var(--navy-rgb),.75);stroke-width:1.1}
+  .edge.t.hot{stroke:rgba(var(--verm-rgb),.95);stroke-width:1.1}
+  .dim .edge:not(.hot){opacity:.25}
+
+  .node{cursor:default;transition:opacity .4s}
+  .node.link{cursor:pointer}
+  .node .orb{transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+  .node text{font-family:var(--sans);font-weight:400;fill:var(--ink2);letter-spacing:.01em;transition:fill .3s}
+  .node.theme text{font-weight:500;fill:var(--navy)}
+  .node.org text{fill:var(--muted);font-size:9.5px}
+  .node.hot .orb,.node:hover .orb{transform:scale(1.35)}
+  .node.hot text{fill:var(--ink)}
+  .dim .node:not(.hot){opacity:.18}
+
+  .tip{position:absolute;pointer-events:none;z-index:5;background:var(--navy);color:#eceef4;font-size:11.5px;font-weight:400;letter-spacing:.02em;padding:7px 12px;border-radius:3px;
+    opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s;max-width:250px;line-height:1.45;text-align:left}
+  .tip.show{opacity:1;transform:none}
+  .tip b{display:block;font-weight:500;margin-bottom:1px}
+  .tip span{opacity:.8;font-weight:300}
+
+  .hero h1{font-family:var(--serif);font-weight:500;font-size:clamp(40px,6.6vw,76px);line-height:1.04;letter-spacing:-.02em;margin:34px 0 16px}
+  .hero .tag{font-size:16px;font-weight:300;color:var(--ink2)}
+  .hero .tag.s{font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--muted);margin-top:10px}
+  .hero .tag.s i{font-style:normal;color:var(--vermilion);margin:0 10px}
+  .scroll{margin-top:50px;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .scroll svg{display:block;margin:14px auto 0;animation:bob 2.4s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0);opacity:.6}50%{transform:translateY(6px);opacity:1}}
+
+  /* ---------- sections ---------- */
+  section{padding:84px 0;border-top:1px solid var(--line)}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--navy)}
+  .eyebrow .n{color:var(--vermilion);margin-right:14px}
+  h2{font-family:var(--serif);font-weight:500;font-size:clamp(28px,4.3vw,44px);line-height:1.15;letter-spacing:-.015em;margin:22px 0 22px;max-width:780px}
+  .lead{font-size:16px;color:var(--ink2);max-width:640px;line-height:1.85}
+
+  .legend{margin-top:26px;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .legend .lg{display:inline-flex;align-items:center;gap:7px}
+
+  /* evidence tags */
+  .ev{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:2px 9px;border-radius:100px;border:1px solid;white-space:nowrap;line-height:1.6}
+  .ev.obs{color:var(--navy);border-color:rgba(var(--navy-rgb),.45);background:rgba(var(--navy-rgb),.06)}
+  .ev.unc{color:var(--vermilion);border-color:rgba(var(--verm-rgb),.5);background:rgba(var(--verm-rgb),.07)}
+  .ev.asm{color:var(--navy2);border:1px dashed rgba(var(--navy-rgb),.5)}
+  .ev.prop{color:#fff;background:var(--navy);border-color:var(--navy)}
+  .ev.lim{color:var(--muted);border-color:rgba(143,146,160,.6)}
+
+  /* ---------- rows ---------- */
+  .rows{margin-top:46px;border-top:1px solid var(--line)}
+  .row{border-bottom:1px solid var(--line);margin:0 -14px;padding:0 14px;transition:background .3s}
+  .row:hover,.row.open{background:rgba(var(--navy-rgb),.03)}
+  .row-head{padding:26px 0 8px;cursor:pointer}
+  .row.static .row-head{cursor:default;padding-bottom:6px}
+  .row-top{display:flex;justify-content:space-between;align-items:baseline;gap:18px;flex-wrap:wrap}
+  .row-title{font-size:19px;font-weight:400;letter-spacing:-.005em;color:var(--ink)}
+  .row-title em{font-style:normal;color:var(--muted);font-weight:300;font-size:15px;margin-left:6px}
+  .row-tag{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--muted);white-space:nowrap}
+  .row-desc{font-size:14.5px;color:var(--ink2);margin-top:6px;max-width:700px;line-height:1.7}
+  .row-links{display:flex;gap:20px;flex-wrap:wrap;align-items:center;padding:10px 0 24px;font-size:13.5px}
+  .row-links a{color:var(--navy);text-decoration:none;font-weight:400;border-bottom:1px solid rgba(var(--verm-rgb),.55);padding-bottom:1px}
+  .row-links a:hover{color:var(--vermilion)}
+  .toggle{background:none;border:none;font:inherit;font-size:13.5px;color:var(--ink2);cursor:pointer;padding:0;font-weight:400}
+  .toggle:hover{color:var(--vermilion)}
+  .toggle .pm{display:inline-block;width:12px;transition:transform .4s cubic-bezier(.2,.8,.2,1);margin-left:4px}
+  .row.open .toggle .pm{transform:rotate(45deg)}
+
+  .detail{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s cubic-bezier(.2,.8,.2,1)}
+  .row.open .detail{grid-template-rows:1fr}
+  .detail-inner{overflow:hidden;min-height:0}
+  .detail-body{padding:4px 0 34px;border-top:1px solid var(--line);opacity:0;transition:opacity .5s ease .1s}
+  .row.open .detail-body{opacity:1}
+  .detail h4{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:28px 0 10px}
+  .detail p{font-weight:400;font-size:15px;color:#363a48;max-width:660px;margin-bottom:12px;line-height:1.75}
+  .stmt{display:grid;grid-template-columns:108px 1fr;gap:4px 16px;margin-bottom:14px;align-items:start}
+  .stmt .ev{margin-top:3px;justify-self:start}
+  .stmt p{margin-bottom:8px}
+  .stmt p:last-child{margin-bottom:0}
+  @media(max-width:560px){.stmt{grid-template-columns:1fr;gap:6px}}
+  .caption{font-size:13.5px;color:var(--muted);font-weight:300}
+  table{width:100%;max-width:640px;border-collapse:collapse;margin:4px 0 8px;font-size:14.5px;font-weight:400}
+  th,td{text-align:left;padding:9px 14px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--navy)}
+  td.num{white-space:nowrap;font-family:var(--mono);font-size:13.5px}
+  @media(max-width:560px){
+    table,thead,tbody,tr,th,td{display:block}
+    thead{display:none}
+    tr{padding:10px 0;border-bottom:1px solid var(--line)}
+    td{border:none;padding:2px 0}
+    td:first-child{font-weight:500}
+    td.num{white-space:normal}
+  }
+
+  /* hover card: one headline number per row */
+  .peek{position:fixed;z-index:90;left:0;top:0;width:260px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:0 18px 16px;overflow:hidden;
+    box-shadow:0 18px 40px -12px rgba(var(--navy-rgb),.25);pointer-events:none;opacity:0;transform:translateY(6px) scale(.98);transition:opacity .2s,transform .2s}
+  .peek.show{opacity:1;transform:none}
+  .peek .bar{height:3px;background:var(--vermilion);margin:0 -18px 14px}
+  .peek .big{font-family:var(--serif);font-weight:500;font-size:36px;line-height:1.1;letter-spacing:-.02em;color:var(--navy)}
+  .peek .cap{font-size:12.5px;color:var(--ink2);margin-top:6px;line-height:1.5;font-weight:400}
+  @media(hover:none){.peek{display:none}}
+
+  /* about */
+  dl.plain{margin-top:34px;display:grid;grid-template-columns:140px 1fr;gap:12px 24px;font-size:15px;max-width:700px;border-top:1px solid var(--line);padding-top:22px}
+  dl.plain dt{color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding-top:4px}
+  dl.plain dd{color:var(--ink2)}
+  @media(max-width:560px){dl.plain{grid-template-columns:1fr;gap:2px}dl.plain dd{margin-bottom:16px}}
+
+  footer{border-top:1px solid var(--line);padding:30px 0 46px}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;max-width:1000px}
+  .fl{display:flex;gap:24px}
+  .fl a{font-size:13px;color:var(--ink2);text-decoration:none;letter-spacing:.03em;transition:color .25s}
+  .fl a:hover{color:var(--vermilion)}
+  .fy{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+  .rv{opacity:0;transform:translateY(18px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.node{opacity:1}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="in">
+    <a class="brand" href="#top">Sandy Tai</a>
+    <div class="navlinks">
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#about">About</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ---------------- HERO ---------------- -->
+<header class="hero" id="top">
+  <div class="graph" id="graph">
+    <div class="glow g3"></div><div class="glow g1"></div><div class="glow g2"></div>
+    <div class="water l">Projects</div>
+    <div class="water r">Experience</div>
+    <svg id="svg"></svg>
+    <div class="tip" id="tip"></div>
+  </div>
+
+  <div class="wrap">
+
+    <h1>Sandy (Seoyeon) Tai</h1>
+    <p class="tag">Working on experiments, metrics, and the data quality behind them.</p>
+    <p class="tag s">Data analyst<i>/</i>Columbia MSBA<i>/</i>New York</p>
+    <div class="scroll">Scroll
+      <svg width="12" height="16" viewBox="0 0 12 16" fill="none" stroke="#8f92a0" stroke-width="1"><path d="M6 1v13M1.5 9.5L6 14l4.5-4.5"/></svg>
+    </div>
+  </div>
+</header>
+
+<!-- ---------------- 01 PROJECTS ---------------- -->
+<section id="projects">
+  <div class="wrap">
+    <div class="eyebrow rv"><span class="n">01</span>Projects</div>
+    <h2 class="rv">What I looked at, and what the data did and didn't show.</h2>
+    <p class="lead rv">Four projects I can walk through in detail. Each one opens into a short write-up with the question, my approach, the results, and the limits.</p>
+    <div class="legend rv">
+      <span>How I label statements:</span>
+      <span class="lg"><span class="ev obs">Observed</span>what the data shows</span>
+      <span class="lg"><span class="ev unc">Uncertain</span>can't be separated</span>
+      <span class="lg"><span class="ev asm">Assumption</span>an input I set</span>
+      <span class="lg"><span class="ev prop">Proposed</span>not run</span>
+      <span class="lg"><span class="ev lim">Limit</span>what it can't say</span>
+    </div>
+
+    <div class="rows">
+
+      <!-- Demand & inventory planning -->
+      <article class="row rv" id="r-plan" data-peek="plan">
+        <div class="row-head">
+          <div class="row-top"><div class="row-title">Demand and inventory planning simulation</div><div class="row-tag">SYNTHETIC DATA</div></div>
+          <p class="row-desc">A forecasting, 30-week supply plan and exception-review pipeline for a simulated consumer-electronics business, plus three planning decisions I tested by re-running the plan.</p>
+        </div>
+        <div class="row-links">
+          <a href="https://hihisy.github.io/Demand-inventory-planning" target="_blank" rel="noopener">Full report &rarr;</a>
+          <button class="toggle" aria-expanded="false" aria-controls="d-plan">Read the write-up<span class="pm">+</span></button>
+        </div>
+        <div class="detail" id="d-plan"><div class="detail-inner"><div class="detail-body">
+          <h4>Question</h4>
+          <p>A supply team commits orders weeks before demand shows up, and an overall fill rate can hide a node that is failing badly. How do you turn uncertain demand into a supply plan a planner can act on, and which decisions would actually change that plan? All of the data is synthetic: 10 consumer-electronics SKUs across 3 channels and 2 U.S. regions (60 demand series, 104 weeks of history). No real company data was used, and the table design is my own.</p>
+          <h4>Approach</h4>
+          <p>Stage 1 forecasts customer orders, not sell-through, because sell-through is capped by stockouts and a model trained on it under-forecasts exactly where availability failed. I held out the last 13 weeks, used the 13 weeks before them to pick blend weights and a bias correction, froze both, and scored once. The champion blends a pooled gradient boosting model with last year's same-week orders, adjusted for the planned promotion lift. I left out the planner forecast that ships with the dataset, because it was generated from the simulator's hidden demand signal.</p>
+          <p>Stage 2 turns a 30-week demand plan into projected inventory week by week, using on-hand stock, confirmed purchase orders, lead time, safety stock, target weeks of supply (WOS), minimum order quantity and pack size. Stage 3 flags exceptions at SKU, channel, region and week level, merges consecutive weekly flags into episodes, and ranks them with a fixed scoring formula. An LLM then drafts a short explanation for the top 20 episodes from structured facts only.</p>
+          <h4>Findings</h4>
+          <div class="stmt"><span class="ev obs">Observed</span><div>
+            <table>
+              <thead><tr><th>Measure</th><th>Result</th></tr></thead>
+              <tbody>
+                <tr><td>Forecast error (WAPE), 13-week test window</td><td>9.7% at 1 week ahead, 11.7% at 13 weeks</td></tr>
+                <tr><td>Naive last-week forecast, same rows</td><td>18.1% at 1 week, 31.6% at 13 weeks</td></tr>
+                <tr><td>Projected fill rate, 30-week plan</td><td>99.9% (267 shortage units against 232,324 units of demand)</td></tr>
+                <tr><td>Exceptions</td><td>736 flagged weekly rows, merged into 225 episodes, 65 of them P1 or P2</td></tr>
+              </tbody>
+            </table>
+            <p class="caption">WAPE is total absolute error divided by total actual orders.</p>
+          </div></div>
+          <div class="stmt"><span class="ev obs">Observed</span><p>The 99.9% fill rate hid one node. TV65-OLED-B in E-Commerce US-West missed 36% of demand in a Big Game promotion week, while the same SKU in Retail US-East held about 266 units above its target.</p></div>
+          <div class="stmt"><span class="ev obs">Observed</span><p>All 7 projected shortage weeks fell inside the SKU's replenishment lead time, so no new order could reach them. The orders the engine placed for those nodes landed after the event and showed up as excess.</p></div>
+          <div class="stmt"><span class="ev obs">Observed</span><p>Projected weeks of supply averaged 5.82 against a target of 5.21, because the order-up-to level added safety stock on top of target WOS.</p></div>
+          <h4>Decisions tested</h4>
+          <div class="stmt"><span class="ev prop">Proposed</span><div>
+            <p>I turned these findings into three decisions and measured each by re-running the same planning engine with the change applied. The results are simulated, not observed in operations.</p>
+            <table>
+              <thead><tr><th>Decision</th><th>Effect in the simulated 30-week plan</th></tr></thead>
+              <tbody>
+                <tr><td>Move stock between nodes of the same SKU before expediting</td><td>Shortage units 267 to 34. Fill rate 99.885% to 99.985%.</td></tr>
+                <tr><td>Count safety stock inside target WOS, not on top of it</td><td>Average inventory down $2.41M (12.5%). Fill rate unchanged in paired demand-stress runs.</td></tr>
+                <tr><td>Drop the lifecycle uplift from the demand plan</td><td>30-week demand down 14,981 units. New purchase orders down $13.46M.</td></tr>
+              </tbody>
+            </table>
+          </div></div>
+          <div class="stmt"><span class="ev unc">Uncertain</span><p>The uplift came from a lifecycle factor that read the holiday-quarter peak as growth. Whether real demand would have arrived at the higher level is unknown. If it had, weekly re-planning still filled 99.89% of units.</p></div>
+          <div class="stmt"><span class="ev asm">Assumption</span><p>The transfers assume one-week transit and ignore freight cost. The stress test varies demand but not supply timing. The 99.9% projection assumes every planned order arrives in full, although 4.0% of received purchase-order lines in the history arrived late.</p></div>
+          <div class="stmt"><span class="ev obs">Observed</span><p>Of the 12 LLM recommendations I reviewed, every number quoted matched the engine's output. 10 used only facts from their own packet. The other two referred to a linked shortage episode that was not in their packet, so the next fix is to include linked-episode facts in the packet.</p></div>
+          <h4>Limits</h4>
+          <div class="stmt"><span class="ev lim">Limit</span><div>
+            <p>The data is synthetic, and the simulator's own noise means no model should be expected to beat 8.4% WAPE, so accuracy here looks tighter than real demand would allow. Forecasts were validated only up to 13 weeks, on one test window. The 30-week plan uses a simpler rule-based demand blend that I did not backtest. The LLM text was drafted with ChatGPT and reviewed by hand, and the live API path is switched off.</p>
+            <p>The decision impacts are measured inside an engine and a dataset I built, so they show that the logic works, not what it would be worth to a real business. Next steps would be a rolling backtest over several windows and a year-over-year growth input to replace the lifecycle factor.</p>
+          </div></div>
+        </div></div></div>
+      </article>
+
+      <!-- Artea -->
+      <article class="row rv" id="r-artea" data-peek="artea">
+        <div class="row-head">
+          <div class="row-top"><div class="row-title">E-commerce promotion experiment: revenue impact and targeting</div><div class="row-tag">5,000 CUSTOMERS</div></div>
+          <p class="row-desc">A 20% coupon test where more people bought but revenue per customer did not rise. I reanalyzed the case data and worked out what a follow-up test would need.</p>
+        </div>
+        <div class="row-links">
+          <a href="https://hihisy.github.io/artea-growth-analytics/artea_portfolio_dashboard.html" target="_blank" rel="noopener">Interactive dashboard &rarr;</a>
+          <button class="toggle" aria-expanded="false" aria-controls="d-artea">Read the write-up<span class="pm">+</span></button>
+        </div>
+        <div class="detail" id="d-artea"><div class="detail-inner"><div class="detail-body">
+          <h4>Question</h4>
+          <p>A 20% coupon was tested on about 5,000 customers. Did it raise revenue per customer, and is there any customer group worth testing again in the next campaign? I did not run the experiment. It is an educational case (Artea) that I reanalyzed, and the dashboard says so at the top.</p>
+          <h4>Approach</h4>
+          <p>I started by fixing the metric. Revenue per customer is purchase rate times transactions per purchaser times revenue per transaction, and every figure divides by all assigned customers, including people who bought nothing. I built that metric tree in SQL. Looking only at purchase rate would have made the coupon look like a clear win.</p>
+          <p>I then compared the two arms in Python, split the results by customer segment, and modeled profit under different margin, discount and cost assumptions. For the next campaign I worked out how large a follow-up test would need to be.</p>
+          <h4>Findings</h4>
+          <div class="stmt"><span class="ev obs">Observed</span><div>
+            <table>
+              <thead><tr><th>Metric</th><th>Coupon vs. control</th></tr></thead>
+              <tbody>
+                <tr><td>Purchase rate</td><td class="num">+1.70 percentage points</td></tr>
+                <tr><td>Revenue per transaction</td><td class="num">-19.8%</td></tr>
+                <tr><td>Revenue per customer</td><td>No increase. The confidence interval includes both a loss and a gain.</td></tr>
+              </tbody>
+            </table>
+            <p class="caption">More people bought, but each purchase brought in about a fifth less, which cancelled the gain.</p>
+          </div></div>
+          <div class="stmt"><span class="ev unc">Uncertain</span><p>A lower revenue per transaction can come from the discount itself, from a different mix of buyers, or both. This data cannot separate them.</p></div>
+          <div class="stmt"><span class="ev obs">Observed</span><p>I compared 12 segments (acquisition channel, purchase history, cart status, weeks since last visit). None showed a revenue improvement after correcting for multiple comparisons.</p></div>
+          <div class="stmt"><span class="ev asm">Assumption</span><p>The profit scenarios depend on something the data does not say: whether recorded revenue is before or after the discount. For cart abandoners, the estimated profit changed from positive to negative on that single assumption. For the full customer base, the estimate was negative in every margin and cost combination I tried.</p></div>
+          <h4>Recommendation</h4>
+          <div class="stmt"><span class="ev prop">Proposed</span><p>I would not treat a broad coupon send as proven, and I would first confirm how discounts are recorded. Cart abandoners are a hypothesis for a new randomized test, not a validated target. A follow-up test sized to detect a gain of +1.00 per customer needs 30,692 customers. The next-campaign file lists 1,741 cart abandoners out of 6,000 candidates, so sample size is the main constraint on that test.</p></div>
+          <h4>Limits</h4>
+          <div class="stmt"><span class="ev lim">Limit</span><div>
+            <p>I picked cart abandoners after seeing the results, so the estimate for that group is biased upward and should not be used as a forecast.</p>
+            <p>I could not verify how customers were assigned to arms, so the balance and sample-ratio checks are diagnostics and not proof of randomization. The case data gives no currency, outcome window, or refund and cost data. The segment tests are exploratory because I had already looked at this dataset in coursework.</p>
+          </div></div>
+        </div></div></div>
+      </article>
+
+      <!-- Citi Bike -->
+      <article class="row rv" id="r-citi" data-peek="citi">
+        <div class="row-head">
+          <div class="row-top"><div class="row-title">Citi Bike rebalancing analytics</div><div class="row-tag">132K TRIPS</div></div>
+          <p class="row-desc">Which stations lose or gain bikes, when, and whether the next hour's biggest net outflows can be predicted early enough to act on.</p>
+        </div>
+        <div class="row-links">
+          <a href="https://github.com/hihisy/citibike-rebalancing-analytics" target="_blank" rel="noopener">GitHub repository &rarr;</a>
+          <button class="toggle" aria-expanded="false" aria-controls="d-citi">Read the write-up<span class="pm">+</span></button>
+        </div>
+        <div class="detail" id="d-citi"><div class="detail-inner"><div class="detail-body">
+          <h4>Question</h4>
+          <p>Bike-share stations run out of bikes or fill up, and crews have to move bikes by hand. Which stations are affected, at what times, and can the stations that will lose the most bikes in the next hour be predicted early enough to act?</p>
+          <h4>Data and approach</h4>
+          <p>The data is about 132,000 Citi Bike trips from January 2018. I loaded them into SQLite and used SQL to count trips per station, work out net flow per station (starts minus ends), and look at demand by hour and weekday. I ran statistical tests on two comparisons: peak versus off-peak hours, and Subscribers versus Customers.</p>
+          <p>For prediction I trained a Random Forest to flag stations in the top 20% of net outflow in the next hour. I split the data by time instead of at random, so the model is always tested on a later period than it was trained on. Random splitting would let it see the future. I evaluated it with F1 score, a confusion matrix and feature importance. A Streamlit dashboard puts the map, demand trends and model output in one place.</p>
+          <h4>Findings</h4>
+          <div class="stmt"><span class="ev obs">Observed</span><div>
+            <table>
+              <thead><tr><th>Question</th><th>Result</th></tr></thead>
+              <tbody>
+                <tr><td>Where is demand?</td><td>Trips concentrate at a small number of large hubs, such as Pershing Square North.</td></tr>
+                <tr><td>Which stations lose or gain bikes?</td><td>Both net sources and net sinks exist. Net-outflow stations are the ones that need bikes sent to them.</td></tr>
+                <tr><td>When is demand highest?</td><td>Afternoon and evening peaks, and busier mid-week days.</td></tr>
+                <tr><td>Do rider types differ?</td><td>Subscribers take most of the trips and ride for less time. Customers take fewer, longer trips. Both differences held up in the tests.</td></tr>
+              </tbody>
+            </table>
+            <p class="caption">These are summaries. The notebook in the repository has the numbers.</p>
+          </div></div>
+          <h4>Limits</h4>
+          <div class="stmt"><span class="ev lim">Limit</span><p>This is one winter month, so it does not show how patterns change with season or weather. The notebook also estimates how concentrated the imbalance is in the top five net-outflow stations. That is a measure of concentration and not a measured benefit from rebalancing, because I had no data on what crews actually did. The trip data is too large to include in the repository, so it has to be downloaded separately to rerun the notebook.</p></div>
+        </div></div></div>
+      </article>
+
+      <!-- Pricing -->
+      <article class="row rv" id="r-pricing" data-peek="pricing">
+        <div class="row-head">
+          <div class="row-top"><div class="row-title">Pricing strategy evaluation under demand uncertainty</div><div class="row-tag">200 SIMULATIONS</div></div>
+          <p class="row-desc">How much to trust the price that looks best on a limited sample of customer demand.</p>
+        </div>
+        <div class="row-links">
+          <button class="toggle" aria-expanded="false" aria-controls="d-pricing">Read the write-up<span class="pm">+</span></button>
+        </div>
+        <div class="detail" id="d-pricing"><div class="detail-inner"><div class="detail-body">
+          <h4>Question</h4>
+          <p>If you only have a limited sample of customer demand, how reliable is the price that looks best on that sample?</p>
+          <h4>Approach</h4>
+          <p>I compared four pricing methods across 200 simulations using 498 data points. I tested both the empirical and the heuristic models on data they had not been fit to, and compared how much revenue each alternative gave up.</p>
+          <h4>Result</h4>
+          <div class="stmt"><span class="ev obs">Observed</span><p>A conservative price did better out-of-sample than the naive optimum.</p></div>
+          <div class="stmt"><span class="ev prop">Proposed</span><p>I recommended the conservative price.</p></div>
+        </div></div></div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ---------------- 02 EXPERIENCE ---------------- -->
+<section id="experience">
+  <div class="wrap">
+    <div class="eyebrow rv"><span class="n">02</span>Experience</div>
+    <h2 class="rv">Internships and industry projects, mostly about getting data into a state people can use.</h2>
+
+    <div class="rows">
+      <article class="row static rv" id="r-muckrack" data-peek="muck">
+        <div class="row-head">
+          <div class="row-top"><div class="row-title">Product &amp; Market Analytics Intern<em>Muck Rack</em></div><div class="row-tag">MAY - AUG 2025</div></div>
+          <p class="row-desc">The team was cleaning a 600K-record dataset by hand. I built a pipeline that used the OpenAI Batch API on 50K+ labeled record pairs to find and correct errors. It fixed 4,700+ errors and cut the manual review that was needed. I also wrote validation checks that flagged inconsistencies across 4M record pairs, and worked with Sales, Product and Analytics to define the problem and break down the unclear data issues.</p>
+        </div>
+        <div class="row-links"></div>
+      </article>
+
+      <article class="row static rv" id="r-apple" data-peek="apple">
+        <div class="row-head">
+          <div class="row-top"><div class="row-title">Product Analytics Analyst, Capstone<em>Apple</em></div><div class="row-tag">JAN - MAY 2025</div></div>
+          <p class="row-desc">I built a dashboard on Snowflake with a text-to-SQL interface, so leaders could ask questions about 1M+ records and 10+ KPIs in plain language. I automated the recurring KPI reports, which cut manual effort by 40%. I also built ranked reports showing each team's top three priorities, so leadership could compare teams against one standard.</p>
+        </div>
+        <div class="row-links"></div>
+      </article>
+
+      <article class="row static rv" id="r-ecb" data-peek="ecb">
+        <div class="row-head">
+          <div class="row-top"><div class="row-title">Data Scientist (Risk Analytics), Industrial Project<em>ECB &amp; EIB</em></div><div class="row-tag">MAY - AUG 2025</div></div>
+          <p class="row-desc">I built models that estimated financial exposure of &euro;22M to &euro;49M across scenarios, and wrote Python checks to catch errors in the input data behind every reported figure. Where different methods gave different answers, I reconciled them into one consistent output. We presented the results to non-technical stakeholders.</p>
+        </div>
+        <div class="row-links">
+          <a href="https://www.linkedin.com/posts/seoyeontai_im-excited-to-have-presented-our-poster-activity-7378945125248458752-8c67?utm_source=share&amp;utm_medium=member_desktop&amp;rcm=ACoAAEFPqV0By1fPVgsSpObG_PY9uBTA9RpmoYA" target="_blank" rel="noopener">Project poster (LinkedIn) &rarr;</a>
+        </div>
+      </article>
+
+      <article class="row static rv" id="r-clabi" data-peek="clabi">
+        <div class="row-head">
+          <div class="row-top"><div class="row-title">Data Analytics Intern<em>ClaBi, Seoul</em></div><div class="row-tag">MAR - JUL 2024</div></div>
+          <p class="row-desc">I used 2.5M+ system logs to map how work currently flowed and find bottlenecks, then worked with developers to fix the ones with the biggest impact. I built Tableau dashboards that leadership used in weekly business reviews to track KPIs and product health, and automated manual workflows, which improved accuracy by 15% and cut processing time by 30%.</p>
+        </div>
+        <div class="row-links"></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ---------------- 03 ABOUT ---------------- -->
+<section id="about">
+  <div class="wrap">
+    <div class="eyebrow rv"><span class="n">03</span>About</div>
+    <h2 class="rv">I like questions where the first answer is probably wrong.</h2>
+    <p class="lead rv">A coupon test that raises purchases but not revenue is a good example. My work so far has been SQL and Python analysis, experiment reanalysis, dashboards, and the data validation underneath them, across a master's program, three internships or industry projects in New York, and one startup internship in Seoul.</p>
+    <dl class="plain rv">
+      <dt>Education</dt>
+      <dd>Columbia University, M.S. in Business Analytics, Dec 2025 (GPA 3.45)<br>University of Utah, B.S. in Communications, minor in Computer Science, Dec 2023 (GPA 3.4, Dean's List)</dd>
+      <dt>Coursework</dt>
+      <dd>Optimization, Supply Chain Analytics, Data Analytics, Algorithmic Decision-Making in Digital Marketplaces</dd>
+      <dt>Methods</dt>
+      <dd>A/B testing and causal inference, KPI design and monitoring, metric trees, data validation, anomaly detection, demand forecasting, inventory planning</dd>
+      <dt>Tools</dt>
+      <dd>SQL (Snowflake, MySQL), Python, Tableau, Advanced Excel, Streamlit, Google Cloud Platform</dd>
+    </dl>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="fl">
+      <a href="mailto:st3718@columbia.edu">st3718@columbia.edu</a>
+      <a href="https://www.linkedin.com/in/seoyeontai" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://github.com/hihisy" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <div class="fy">2026</div>
+  </div>
+</footer>
+
+<div class="peek" id="peek"></div>
+
+<script>
+(function(){
+  const NS='http://www.w3.org/2000/svg';
+  const graph=document.getElementById('graph');
+  const svg=document.getElementById('svg');
+  const tip=document.getElementById('tip');
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* id, label, type, x%, y%, label side, tooltip, row to open */
+  const N=[
+    ['exper','Experimentation','theme',50,19,'t','Theme'],
+    ['metric','Metrics & KPIs','theme',57,37,'r','Theme'],
+    ['quality','Data Quality','theme',50,55,'l','Theme'],
+    ['dash','Dashboards','theme',56,69,'r','Theme'],
+    ['ml','Forecasting & ML','theme',48,85,'b','Theme'],
+
+    ['artea','Artea experiment','proj',15,29,'r','5,000-customer coupon test','r-artea'],
+    ['citi','Citi Bike','proj',8,45,'r','132K trips, next-hour outflow model','r-citi'],
+    ['plan','Demand planning','proj',10,61,'r','10 SKUs, 30-week plan (simulated)','r-plan'],
+    ['price','Pricing','proj',17,79,'r','4 methods, 200 simulations','r-pricing'],
+
+    ['muck','Muck Rack','exp',84,26,'l','600K-record cleanup','r-muckrack'],
+    ['apple','Apple','exp',91,45,'l','Text-to-SQL dashboard, 10+ KPIs','r-apple'],
+    ['ecb','ECB & EIB','exp',82,63,'l','Exposure models, EUR 22M to 49M','r-ecb'],
+    ['clabi','ClaBi','exp',89,81,'l','2.5M+ logs, Tableau dashboards','r-clabi'],
+
+    ['colu','Columbia','org',28,92,'b','M.S. Business Analytics']
+  ];
+  const E=[
+    ['exper','metric'],['metric','quality'],['quality','ml'],['metric','dash'],['dash','ml'],['exper','dash'],
+    ['artea','exper','Coupon A/B test'],['artea','metric','Revenue metric tree in SQL'],['artea','dash','HTML/JavaScript dashboard'],
+    ['citi','ml','Next-hour outflow model'],['citi','dash','Streamlit dashboard'],['citi','metric','Net flow per station'],
+    ['price','ml','Out-of-sample pricing models'],['price','exper','Simulation-based comparison'],
+    ['muck','quality','Validation across 4M record pairs'],['muck','ml','AI-assisted record labeling'],
+    ['apple','dash','Text-to-SQL dashboard'],['apple','metric','10+ KPIs on 1M+ records'],
+    ['ecb','ml','Exposure models'],['ecb','quality','Input data error checks'],
+    ['clabi','dash','Tableau dashboards'],['clabi','metric','Weekly KPI tracking'],
+    ['colu','apple','Capstone'],['colu','ecb','Industrial project'],
+    ['plan','ml','Multi-horizon demand forecasts'],['plan','quality','Checks on 7 synthetic tables'],['plan','metric','Weeks of supply and exception scoring']
+  ];
+
+  const nodes={};let W=0,H=0;
+  const eg=document.createElementNS(NS,'g');svg.appendChild(eg);
+  const ng=document.createElementNS(NS,'g');svg.appendChild(ng);
+
+  const R={theme:11,proj:6.5,exp:6.5,org:3.5};
+  const COL={theme:'#1f2a44',proj:'#4a5b85',exp:'#c8643c',org:'#aeb0bb'};
+
+  const defs=document.createElementNS(NS,'defs');
+  defs.innerHTML='<radialGradient id="halo"><stop offset="0%" stop-color="#1f2a44" stop-opacity=".22"/><stop offset="100%" stop-color="#1f2a44" stop-opacity="0"/></radialGradient>';
+  svg.appendChild(defs);
+
+  N.forEach((d,i)=>{
+    const o={id:d[0],label:d[1],type:d[2],px:d[3],py:d[4],side:d[5],tip:d[6],go:d[7],ph:i*1.7,x:0,y:0,edges:[],nbrs:new Set()};
+    const g=document.createElementNS(NS,'g');g.setAttribute('class','node '+o.type+(o.go?' link':''));
+    g.style.opacity=0;
+    if(o.type==='theme'){
+      const h=document.createElementNS(NS,'circle');h.setAttribute('r',26);h.setAttribute('fill','url(#halo)');g.appendChild(h);
+    }
+    const orbg=document.createElementNS(NS,'g');orbg.setAttribute('class','orb');orbg.style.transformBox='fill-box';orbg.style.transformOrigin='center';
+    const c=document.createElementNS(NS,'circle');c.setAttribute('r',R[o.type]);c.setAttribute('fill',COL[o.type]);orbg.appendChild(c);g.appendChild(orbg);
+    const t=document.createElementNS(NS,'text');t.textContent=o.label;
+    t.setAttribute('font-size',o.type==='theme'?13:11.5);
+    const r=R[o.type];
+    if(o.side==='r'){t.setAttribute('x',r+9);t.setAttribute('y',4)}
+    else if(o.side==='l'){t.setAttribute('x',-(r+9));t.setAttribute('y',4);t.setAttribute('text-anchor','end')}
+    else if(o.side==='t'){t.setAttribute('y',-(r+10));t.setAttribute('text-anchor','middle')}
+    else{t.setAttribute('y',r+17);t.setAttribute('text-anchor','middle')}
+    g.appendChild(t);
+    ng.appendChild(g);o.el=g;nodes[o.id]=o;
+
+    g.addEventListener('mouseenter',()=>focus(o));
+    g.addEventListener('mouseleave',unfocus);
+    if(o.go)g.addEventListener('click',()=>openRow(o.go));
+  });
+
+  const edges=E.map((e,i)=>{
+    const a=nodes[e[0]],b=nodes[e[1]];
+    const warm=a.type==='exp'||b.type==='exp';
+    const p=document.createElementNS(NS,'path');p.setAttribute('class','edge'+(warm?' t':''));
+    const hit=document.createElementNS(NS,'path');hit.setAttribute('class','edge-hit');
+    eg.appendChild(p);eg.appendChild(hit);
+    const ed={a,b,p,hit,label:e[2],curv:((i*37)%7-3)/16};
+    a.edges.push(ed);b.edges.push(ed);a.nbrs.add(b.id);b.nbrs.add(a.id);
+    hit.addEventListener('mouseenter',ev=>{focusEdge(ed);showTip(ev,(ed.label?'<b>'+ed.label+'</b>':'')+'<span>'+a.label+' and '+b.label+'</span>')});
+    hit.addEventListener('mousemove',moveTip);
+    hit.addEventListener('mouseleave',()=>{unfocus();hideTip()});
+    return ed;
+  });
+
+  function layout(){
+    const r=graph.getBoundingClientRect();W=r.width;H=r.height;
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    Object.values(nodes).forEach(o=>{o.bx=o.px/100*W;o.by=o.py/100*H});
+  }
+  function path(ed){
+    const x1=ed.a.x,y1=ed.a.y,x2=ed.b.x,y2=ed.b.y;
+    const mx=(x1+x2)/2,my=(y1+y2)/2,dx=x2-x1,dy=y2-y1;
+    return 'M'+x1+' '+y1+' Q'+(mx-dy*ed.curv*1.6)+' '+(my+dx*ed.curv*1.6)+' '+x2+' '+y2;
+  }
+  function draw(t){
+    Object.values(nodes).forEach(o=>{
+      const amp=o.type==='theme'?3:4.5;
+      o.x=o.bx+(reduce?0:Math.sin(t*.00035+o.ph)*amp);
+      o.y=o.by+(reduce?0:Math.cos(t*.0003+o.ph*1.3)*amp);
+      o.el.setAttribute('transform','translate('+o.x+' '+o.y+')');
+    });
+    edges.forEach(ed=>{const d=path(ed);ed.p.setAttribute('d',d);ed.hit.setAttribute('d',d)});
+  }
+  function loop(t){draw(t);if(!reduce)requestAnimationFrame(loop)}
+
+  function focus(o){
+    graph.classList.add('dim');svg.classList.add('dim');
+    o.el.classList.add('hot');
+    o.nbrs.forEach(id=>nodes[id].el.classList.add('hot'));
+    o.edges.forEach(e=>e.p.classList.add('hot'));
+    const names=[...o.nbrs].map(id=>nodes[id].label);
+    const body=o.type==='theme'
+      ? '<b>'+o.label+'</b><span>'+names.join(', ')+'</span>'
+      : '<b>'+o.label+'</b><span>'+o.tip+'</span>';
+    showTipAt(o.x,o.y,body,o);
+  }
+  function focusEdge(ed){svg.classList.add('dim');ed.p.classList.add('hot');ed.a.el.classList.add('hot');ed.b.el.classList.add('hot')}
+  function unfocus(){svg.classList.remove('dim');graph.classList.remove('dim');svg.querySelectorAll('.hot').forEach(el=>el.classList.remove('hot'));hideTip()}
+  function showTipAt(x,y,html,o){
+    tip.innerHTML=html;tip.classList.add('show');
+    const w=tip.offsetWidth;
+    let left=x+(o.side==='l'?-w-18:18);
+    if(left<0)left=x+18; if(left+w>W)left=x-w-18;
+    tip.style.left=left+'px';tip.style.top=(y-(o.side==='t'?-14:18))+'px';
+  }
+  function showTip(ev,html){tip.innerHTML=html;tip.classList.add('show');moveTip(ev)}
+  function moveTip(ev){
+    const r=graph.getBoundingClientRect();
+    let x=ev.clientX-r.left+14,y=ev.clientY-r.top-34;
+    const w=tip.offsetWidth;if(x+w>W)x=ev.clientX-r.left-w-14;
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  }
+  function hideTip(){tip.classList.remove('show')}
+
+  /* intro: edges draw in, nodes fade up */
+  layout();draw(0);
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(layout);
+  edges.forEach((ed,i)=>{
+    const L=ed.p.getTotalLength();
+    ed.p.style.strokeDasharray=L;ed.p.style.strokeDashoffset=L;
+    setTimeout(()=>{ed.p.style.transition='stroke-dashoffset 1.8s ease, stroke .35s, stroke-width .35s, opacity .35s';ed.p.style.strokeDashoffset=0},300+i*40);
+    setTimeout(()=>{ed.p.style.strokeDasharray='';ed.p.style.strokeDashoffset='';ed.p.style.transition=''},300+i*40+2000);
+  });
+  Object.values(nodes).forEach((o,i)=>setTimeout(()=>{o.el.style.opacity=1},150+i*70));
+  requestAnimationFrame(loop);
+  let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{layout();draw(performance.now())},120)});
+
+  /* ---------- project rows ---------- */
+  function setOpen(row,open){
+    row.classList.toggle('open',open);
+    const b=row.querySelector('.toggle');if(b)b.setAttribute('aria-expanded',open?'true':'false');
+  }
+  document.querySelectorAll('.row:not(.static)').forEach(row=>{
+    const toggle=()=>setOpen(row,!row.classList.contains('open'));
+    const b=row.querySelector('.toggle');if(b)b.addEventListener('click',toggle);
+    row.querySelector('.row-head').addEventListener('click',toggle);
+  });
+  function openRow(id){
+    const row=document.getElementById(id);if(!row)return;
+    if(!row.classList.contains('static'))setOpen(row,true);
+    row.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  /* ---------- hover card: one headline number per row (from the write-ups) ---------- */
+  const PEEK={
+    plan:['267 to 34','Projected shortage units after moving stock between same-SKU nodes (simulated data).'],
+    artea:['-19.8%','Revenue per transaction, coupon vs. control. Purchase rate was up 1.70 pp.'],
+    citi:['132K','Citi Bike trips analyzed, January 2018.'],
+    pricing:['200','Simulations across 4 pricing methods.'],
+    muck:['4,700+','Errors corrected in a 600K-record cleanup.'],
+    apple:['-40%','Manual effort on recurring KPI reports.'],
+    ecb:['€22M to €49M','Estimated exposure across scenarios.'],
+    clabi:['-30%','Processing time after automating manual workflows.']
+  };
+  const peek=document.getElementById('peek');
+  function placePeek(ev){
+    const w=peek.offsetWidth,h=peek.offsetHeight;
+    let x=ev.clientX+22,y=ev.clientY-h/2;
+    if(x+w>window.innerWidth-12)x=ev.clientX-w-22;
+    y=Math.max(70,Math.min(y,window.innerHeight-h-12));
+    peek.style.left=x+'px';peek.style.top=y+'px';
+  }
+  document.querySelectorAll('.row[data-peek]').forEach(row=>{
+    row.addEventListener('mouseenter',ev=>{
+      const d=PEEK[row.dataset.peek];if(!d)return;
+      peek.innerHTML='<div class="bar"></div><div class="big">'+d[0]+'</div><div class="cap">'+d[1]+'</div>';
+      placePeek(ev);peek.classList.add('show');
+    });
+    row.addEventListener('mousemove',placePeek);
+    row.addEventListener('mouseleave',()=>peek.classList.remove('show'));
+  });
+  document.querySelectorAll('.detail').forEach(d=>d.addEventListener('mouseenter',()=>peek.classList.remove('show')));
+
+  /* ---------- scroll reveal ---------- */
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.1});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+})();
+</script>
+</body>
+</html>
