@@ -204,8 +204,8 @@
   <div class="wrap">
 
     <h1>Sandy (Seoyeon) Tai</h1>
-    <p class="tag">Working on experiments, metrics, and the data quality behind them.</p>
-    <p class="tag s">Data analyst<i>/</i>Columbia MSBA<i>/</i>New York</p>
+    <p class="tag">Analyzing experiments, metrics, and the data behind business decisions.</p>
+    <p class="tag s">Data analyst<i>/</i>New York</p>
     <div class="scroll">Scroll
       <svg width="12" height="16" viewBox="0 0 12 16" fill="none" stroke="#8f92a0" stroke-width="1"><path d="M6 1v13M1.5 9.5L6 14l4.5-4.5"/></svg>
     </div>
@@ -216,24 +216,65 @@
 <section id="projects">
   <div class="wrap">
     <div class="eyebrow rv"><span class="n">01</span>Projects</div>
-    <h2 class="rv">What I looked at, and what the data did and didn't show.</h2>
-    <p class="lead rv">Four projects I can walk through in detail. Each one opens into a short write-up with the question, my approach, the results, and the limits.</p>
+    <h2 class="rv">Testing whether the obvious answer holds up.</h2>
+    <p class="lead rv">Each project starts with a decision someone has to make, then tests how much the data can support. She reanalyzed a coupon experiment, built a model to flag Citi Bike stations that will lose bikes, and used a simulated supply plan to test three planning decisions.</p>
     <div class="legend rv">
-      <span>How I label statements:</span>
+      <span>How statements are labeled:</span>
       <span class="lg"><span class="ev obs">Observed</span>what the data shows</span>
       <span class="lg"><span class="ev unc">Uncertain</span>can't be separated</span>
-      <span class="lg"><span class="ev asm">Assumption</span>an input I set</span>
+      <span class="lg"><span class="ev asm">Assumption</span>an input that was set</span>
       <span class="lg"><span class="ev prop">Proposed</span>not run</span>
       <span class="lg"><span class="ev lim">Limit</span>what it can't say</span>
     </div>
 
     <div class="rows">
 
+      <!-- Artea -->
+      <article class="row rv" id="r-artea" data-peek="artea">
+        <div class="row-head">
+          <div class="row-top"><div class="row-title">E-commerce promotion experiment: revenue impact and targeting</div><div class="row-tag">5,000 CUSTOMERS</div></div>
+          <p class="row-desc">Purchases rose 1.70 points, but revenue per customer did not. Traces why a 20% coupon looked like a win on one metric and not on the one that counts, then sizes the follow-up test that could settle it.</p>
+        </div>
+        <div class="row-links">
+          <a href="https://hihisy.github.io/artea-growth-analytics/artea_portfolio_dashboard.html" target="_blank" rel="noopener">Interactive dashboard &rarr;</a>
+          <button class="toggle" aria-expanded="false" aria-controls="d-artea">Read the write-up<span class="pm">+</span></button>
+        </div>
+        <div class="detail" id="d-artea"><div class="detail-inner"><div class="detail-body">
+          <h4>Question</h4>
+          <p>A 20% coupon was tested on about 5,000 customers. Did it raise revenue per customer, and is any customer group worth testing again in the next campaign? She did not run the experiment. It is an educational case (Artea) that she reanalyzed, and the dashboard says so at the top.</p>
+          <h4>Approach</h4>
+          <p>She started by fixing the metric. Revenue per customer is purchase rate times transactions per purchaser times revenue per transaction, and every figure divides by all assigned customers, including people who bought nothing. She built that metric tree in SQL. Looking only at purchase rate would have made the coupon look like a clear win.</p>
+          <p>The two arms were then compared in Python, results were split by customer segment, and profit was modeled under different margin, discount and cost assumptions. For the next campaign, she worked out how large a follow-up test would need to be.</p>
+          <h4>Findings</h4>
+          <div class="stmt"><span class="ev obs">Observed</span><div>
+            <table>
+              <thead><tr><th>Metric</th><th>Coupon vs. control</th></tr></thead>
+              <tbody>
+                <tr><td>Purchase rate</td><td class="num">+1.70 percentage points</td></tr>
+                <tr><td>Revenue per transaction</td><td class="num">-19.8%</td></tr>
+                <tr><td>Revenue per customer</td><td>No increase. The confidence interval includes both a loss and a gain.</td></tr>
+              </tbody>
+            </table>
+            <p class="caption">More people bought, but each purchase brought in about a fifth less, which cancelled the gain.</p>
+          </div></div>
+          <div class="stmt"><span class="ev unc">Uncertain</span><p>A lower revenue per transaction can come from the discount itself, from a different mix of buyers, or both. This data cannot separate them.</p></div>
+          <div class="stmt"><span class="ev obs">Observed</span><p>Twelve segments were compared (acquisition channel, purchase history, cart status, weeks since last visit). None showed a revenue improvement after correcting for multiple comparisons.</p></div>
+          <div class="stmt"><span class="ev asm">Assumption</span><p>The profit scenarios depend on something the data does not say: whether recorded revenue is before or after the discount. For cart abandoners, the estimated profit changed from positive to negative on that single assumption. For the full customer base, the estimate was negative in every margin and cost combination tried.</p></div>
+          <h4>Recommendation</h4>
+          <div class="stmt"><span class="ev prop">Proposed</span><p>A broad coupon send should not be treated as proven, and how discounts are recorded should be confirmed first. Cart abandoners are a hypothesis for a new randomized test, not a validated target. A follow-up test sized to detect a gain of +1.00 per customer needs 30,692 customers. The next-campaign file lists 1,741 cart abandoners out of 6,000 candidates, so sample size is the main constraint on that test.</p></div>
+          <h4>Limits</h4>
+          <div class="stmt"><span class="ev lim">Limit</span><div>
+            <p>Cart abandoners were picked after seeing the results, so the estimate for that group is biased upward and should not be used as a forecast.</p>
+            <p>How customers were assigned to arms could not be verified, so the balance and sample-ratio checks are diagnostics and not proof of randomization. The case data gives no currency, outcome window, or refund and cost data. The segment tests are exploratory because she had already looked at this dataset in coursework.</p>
+          </div></div>
+        </div></div></div>
+      </article>
+
       <!-- Demand & inventory planning -->
       <article class="row rv" id="r-plan" data-peek="plan">
         <div class="row-head">
           <div class="row-top"><div class="row-title">Demand and inventory planning simulation</div><div class="row-tag">SYNTHETIC DATA</div></div>
-          <p class="row-desc">A forecasting, 30-week supply plan and exception-review pipeline for a simulated consumer-electronics business, plus three planning decisions I tested by re-running the plan.</p>
+          <p class="row-desc">Uncovers one node missing 36% of demand inside a plan that reports 99.9% fill, then tests three planning decisions against a simulated 30-week supply plan. One of them cuts projected shortages from 267 to 34 units.</p>
         </div>
         <div class="row-links">
           <a href="https://hihisy.github.io/Demand-inventory-planning" target="_blank" rel="noopener">Full report &rarr;</a>
@@ -241,10 +282,10 @@
         </div>
         <div class="detail" id="d-plan"><div class="detail-inner"><div class="detail-body">
           <h4>Question</h4>
-          <p>A supply team commits orders weeks before demand shows up, and an overall fill rate can hide a node that is failing badly. How do you turn uncertain demand into a supply plan a planner can act on, and which decisions would actually change that plan? All of the data is synthetic: 10 consumer-electronics SKUs across 3 channels and 2 U.S. regions (60 demand series, 104 weeks of history). No real company data was used, and the table design is my own.</p>
+          <p>A supply team commits orders weeks before demand shows up, and an overall fill rate can hide a node that is failing badly. The project asks how uncertain demand can become a supply plan a planner can act on, and which decisions would change that plan. All of the data is synthetic: 10 consumer-electronics SKUs across 3 channels and 2 U.S. regions (60 demand series, 104 weeks of history). No real company data was used, and the table design is her own.</p>
           <h4>Approach</h4>
-          <p>Stage 1 forecasts customer orders, not sell-through, because sell-through is capped by stockouts and a model trained on it under-forecasts exactly where availability failed. I held out the last 13 weeks, used the 13 weeks before them to pick blend weights and a bias correction, froze both, and scored once. The champion blends a pooled gradient boosting model with last year's same-week orders, adjusted for the planned promotion lift. I left out the planner forecast that ships with the dataset, because it was generated from the simulator's hidden demand signal.</p>
-          <p>Stage 2 turns a 30-week demand plan into projected inventory week by week, using on-hand stock, confirmed purchase orders, lead time, safety stock, target weeks of supply (WOS), minimum order quantity and pack size. Stage 3 flags exceptions at SKU, channel, region and week level, merges consecutive weekly flags into episodes, and ranks them with a fixed scoring formula. An LLM then drafts a short explanation for the top 20 episodes from structured facts only.</p>
+          <p>Stage 1 forecasts customer orders, not sell-through, because sell-through is capped by stockouts and a model trained on it under-forecasts exactly where availability failed. The last 13 weeks were held out. The 13 weeks before them were used to pick blend weights and a bias correction, and both were frozen before the test window was scored once. The champion blends a pooled gradient boosting model with last year's same-week orders, adjusted for the planned promotion lift. The planner forecast that ships with the dataset was left out, because it was generated from the simulator's hidden demand signal.</p>
+          <p>Stage 2 turns a 30-week demand plan into projected inventory week by week, using on-hand stock, confirmed purchase orders, lead time, safety stock, target weeks of supply (WOS), minimum order quantity and pack size. Stage 3 flags exceptions at SKU, channel, region and week level, merges consecutive flags into episodes, and ranks them with a fixed scoring formula. An LLM drafts a short explanation for the top 20 episodes from structured facts only.</p>
           <h4>Findings</h4>
           <div class="stmt"><span class="ev obs">Observed</span><div>
             <table>
@@ -263,7 +304,7 @@
           <div class="stmt"><span class="ev obs">Observed</span><p>Projected weeks of supply averaged 5.82 against a target of 5.21, because the order-up-to level added safety stock on top of target WOS.</p></div>
           <h4>Decisions tested</h4>
           <div class="stmt"><span class="ev prop">Proposed</span><div>
-            <p>I turned these findings into three decisions and measured each by re-running the same planning engine with the change applied. The results are simulated, not observed in operations.</p>
+            <p>Each finding was turned into a decision and measured by re-running the same planning engine with the change applied. The results are simulated, not observed in operations.</p>
             <table>
               <thead><tr><th>Decision</th><th>Effect in the simulated 30-week plan</th></tr></thead>
               <tbody>
@@ -275,52 +316,11 @@
           </div></div>
           <div class="stmt"><span class="ev unc">Uncertain</span><p>The uplift came from a lifecycle factor that read the holiday-quarter peak as growth. Whether real demand would have arrived at the higher level is unknown. If it had, weekly re-planning still filled 99.89% of units.</p></div>
           <div class="stmt"><span class="ev asm">Assumption</span><p>The transfers assume one-week transit and ignore freight cost. The stress test varies demand but not supply timing. The 99.9% projection assumes every planned order arrives in full, although 4.0% of received purchase-order lines in the history arrived late.</p></div>
-          <div class="stmt"><span class="ev obs">Observed</span><p>Of the 12 LLM recommendations I reviewed, every number quoted matched the engine's output. 10 used only facts from their own packet. The other two referred to a linked shortage episode that was not in their packet, so the next fix is to include linked-episode facts in the packet.</p></div>
+          <div class="stmt"><span class="ev obs">Observed</span><p>Of the 12 LLM recommendations reviewed, every number quoted matched the engine's output. Ten used only facts from their own packet. The other two referred to a linked shortage episode that was not in their packet, so the next fix is to include linked-episode facts in the packet.</p></div>
           <h4>Limits</h4>
           <div class="stmt"><span class="ev lim">Limit</span><div>
-            <p>The data is synthetic, and the simulator's own noise means no model should be expected to beat 8.4% WAPE, so accuracy here looks tighter than real demand would allow. Forecasts were validated only up to 13 weeks, on one test window. The 30-week plan uses a simpler rule-based demand blend that I did not backtest. The LLM text was drafted with ChatGPT and reviewed by hand, and the live API path is switched off.</p>
-            <p>The decision impacts are measured inside an engine and a dataset I built, so they show that the logic works, not what it would be worth to a real business. Next steps would be a rolling backtest over several windows and a year-over-year growth input to replace the lifecycle factor.</p>
-          </div></div>
-        </div></div></div>
-      </article>
-
-      <!-- Artea -->
-      <article class="row rv" id="r-artea" data-peek="artea">
-        <div class="row-head">
-          <div class="row-top"><div class="row-title">E-commerce promotion experiment: revenue impact and targeting</div><div class="row-tag">5,000 CUSTOMERS</div></div>
-          <p class="row-desc">A 20% coupon test where more people bought but revenue per customer did not rise. I reanalyzed the case data and worked out what a follow-up test would need.</p>
-        </div>
-        <div class="row-links">
-          <a href="https://hihisy.github.io/artea-growth-analytics/artea_portfolio_dashboard.html" target="_blank" rel="noopener">Interactive dashboard &rarr;</a>
-          <button class="toggle" aria-expanded="false" aria-controls="d-artea">Read the write-up<span class="pm">+</span></button>
-        </div>
-        <div class="detail" id="d-artea"><div class="detail-inner"><div class="detail-body">
-          <h4>Question</h4>
-          <p>A 20% coupon was tested on about 5,000 customers. Did it raise revenue per customer, and is there any customer group worth testing again in the next campaign? I did not run the experiment. It is an educational case (Artea) that I reanalyzed, and the dashboard says so at the top.</p>
-          <h4>Approach</h4>
-          <p>I started by fixing the metric. Revenue per customer is purchase rate times transactions per purchaser times revenue per transaction, and every figure divides by all assigned customers, including people who bought nothing. I built that metric tree in SQL. Looking only at purchase rate would have made the coupon look like a clear win.</p>
-          <p>I then compared the two arms in Python, split the results by customer segment, and modeled profit under different margin, discount and cost assumptions. For the next campaign I worked out how large a follow-up test would need to be.</p>
-          <h4>Findings</h4>
-          <div class="stmt"><span class="ev obs">Observed</span><div>
-            <table>
-              <thead><tr><th>Metric</th><th>Coupon vs. control</th></tr></thead>
-              <tbody>
-                <tr><td>Purchase rate</td><td class="num">+1.70 percentage points</td></tr>
-                <tr><td>Revenue per transaction</td><td class="num">-19.8%</td></tr>
-                <tr><td>Revenue per customer</td><td>No increase. The confidence interval includes both a loss and a gain.</td></tr>
-              </tbody>
-            </table>
-            <p class="caption">More people bought, but each purchase brought in about a fifth less, which cancelled the gain.</p>
-          </div></div>
-          <div class="stmt"><span class="ev unc">Uncertain</span><p>A lower revenue per transaction can come from the discount itself, from a different mix of buyers, or both. This data cannot separate them.</p></div>
-          <div class="stmt"><span class="ev obs">Observed</span><p>I compared 12 segments (acquisition channel, purchase history, cart status, weeks since last visit). None showed a revenue improvement after correcting for multiple comparisons.</p></div>
-          <div class="stmt"><span class="ev asm">Assumption</span><p>The profit scenarios depend on something the data does not say: whether recorded revenue is before or after the discount. For cart abandoners, the estimated profit changed from positive to negative on that single assumption. For the full customer base, the estimate was negative in every margin and cost combination I tried.</p></div>
-          <h4>Recommendation</h4>
-          <div class="stmt"><span class="ev prop">Proposed</span><p>I would not treat a broad coupon send as proven, and I would first confirm how discounts are recorded. Cart abandoners are a hypothesis for a new randomized test, not a validated target. A follow-up test sized to detect a gain of +1.00 per customer needs 30,692 customers. The next-campaign file lists 1,741 cart abandoners out of 6,000 candidates, so sample size is the main constraint on that test.</p></div>
-          <h4>Limits</h4>
-          <div class="stmt"><span class="ev lim">Limit</span><div>
-            <p>I picked cart abandoners after seeing the results, so the estimate for that group is biased upward and should not be used as a forecast.</p>
-            <p>I could not verify how customers were assigned to arms, so the balance and sample-ratio checks are diagnostics and not proof of randomization. The case data gives no currency, outcome window, or refund and cost data. The segment tests are exploratory because I had already looked at this dataset in coursework.</p>
+            <p>The data is synthetic, and the simulator's own noise means no model should be expected to beat 8.4% WAPE, so accuracy here looks tighter than real demand would allow. Forecasts were validated only up to 13 weeks, on one test window. The 30-week plan uses a simpler rule-based demand blend that was not backtested. The LLM text was drafted with ChatGPT and reviewed by hand, and the live API path is switched off.</p>
+            <p>The decision impacts are measured inside an engine and a dataset she built, so they show that the logic works, not what it would be worth to a real business. Next steps would be a rolling backtest over several windows and a year-over-year growth input to replace the lifecycle factor.</p>
           </div></div>
         </div></div></div>
       </article>
@@ -329,7 +329,7 @@
       <article class="row rv" id="r-citi" data-peek="citi">
         <div class="row-head">
           <div class="row-top"><div class="row-title">Citi Bike rebalancing analytics</div><div class="row-tag">132K TRIPS</div></div>
-          <p class="row-desc">Which stations lose or gain bikes, when, and whether the next hour's biggest net outflows can be predicted early enough to act on.</p>
+          <p class="row-desc">Maps which stations lose and gain bikes across 132K trips, then trains a model to flag next-hour net outflow early enough for crews to rebalance.</p>
         </div>
         <div class="row-links">
           <a href="https://github.com/hihisy/citibike-rebalancing-analytics" target="_blank" rel="noopener">GitHub repository &rarr;</a>
@@ -339,8 +339,8 @@
           <h4>Question</h4>
           <p>Bike-share stations run out of bikes or fill up, and crews have to move bikes by hand. Which stations are affected, at what times, and can the stations that will lose the most bikes in the next hour be predicted early enough to act?</p>
           <h4>Data and approach</h4>
-          <p>The data is about 132,000 Citi Bike trips from January 2018. I loaded them into SQLite and used SQL to count trips per station, work out net flow per station (starts minus ends), and look at demand by hour and weekday. I ran statistical tests on two comparisons: peak versus off-peak hours, and Subscribers versus Customers.</p>
-          <p>For prediction I trained a Random Forest to flag stations in the top 20% of net outflow in the next hour. I split the data by time instead of at random, so the model is always tested on a later period than it was trained on. Random splitting would let it see the future. I evaluated it with F1 score, a confusion matrix and feature importance. A Streamlit dashboard puts the map, demand trends and model output in one place.</p>
+          <p>The data is about 132,000 Citi Bike trips from January 2018. She loaded them into SQLite and used SQL to count trips per station, work out net flow per station (starts minus ends), and look at demand by hour and weekday. Statistical tests covered two comparisons: peak versus off-peak hours, and Subscribers versus Customers.</p>
+          <p>For prediction, a Random Forest flags stations in the top 20% of net outflow in the next hour. The data was split by time instead of at random, so the model is always tested on a later period than it was trained on. Random splitting would let it see the future. Evaluation used F1 score, a confusion matrix and feature importance. A Streamlit dashboard puts the map, demand trends and model output in one place.</p>
           <h4>Findings</h4>
           <div class="stmt"><span class="ev obs">Observed</span><div>
             <table>
@@ -355,27 +355,7 @@
             <p class="caption">These are summaries. The notebook in the repository has the numbers.</p>
           </div></div>
           <h4>Limits</h4>
-          <div class="stmt"><span class="ev lim">Limit</span><p>This is one winter month, so it does not show how patterns change with season or weather. The notebook also estimates how concentrated the imbalance is in the top five net-outflow stations. That is a measure of concentration and not a measured benefit from rebalancing, because I had no data on what crews actually did. The trip data is too large to include in the repository, so it has to be downloaded separately to rerun the notebook.</p></div>
-        </div></div></div>
-      </article>
-
-      <!-- Pricing -->
-      <article class="row rv" id="r-pricing" data-peek="pricing">
-        <div class="row-head">
-          <div class="row-top"><div class="row-title">Pricing strategy evaluation under demand uncertainty</div><div class="row-tag">200 SIMULATIONS</div></div>
-          <p class="row-desc">How much to trust the price that looks best on a limited sample of customer demand.</p>
-        </div>
-        <div class="row-links">
-          <button class="toggle" aria-expanded="false" aria-controls="d-pricing">Read the write-up<span class="pm">+</span></button>
-        </div>
-        <div class="detail" id="d-pricing"><div class="detail-inner"><div class="detail-body">
-          <h4>Question</h4>
-          <p>If you only have a limited sample of customer demand, how reliable is the price that looks best on that sample?</p>
-          <h4>Approach</h4>
-          <p>I compared four pricing methods across 200 simulations using 498 data points. I tested both the empirical and the heuristic models on data they had not been fit to, and compared how much revenue each alternative gave up.</p>
-          <h4>Result</h4>
-          <div class="stmt"><span class="ev obs">Observed</span><p>A conservative price did better out-of-sample than the naive optimum.</p></div>
-          <div class="stmt"><span class="ev prop">Proposed</span><p>I recommended the conservative price.</p></div>
+          <div class="stmt"><span class="ev lim">Limit</span><p>This is one winter month, so it does not show how patterns change with season or weather. The notebook also estimates how concentrated the imbalance is in the top five net-outflow stations. That is a measure of concentration and not a measured benefit from rebalancing, because there was no data on what crews actually did. The trip data is too large to include in the repository, so it has to be downloaded separately to rerun the notebook.</p></div>
         </div></div></div>
       </article>
 
@@ -387,13 +367,14 @@
 <section id="experience">
   <div class="wrap">
     <div class="eyebrow rv"><span class="n">02</span>Experience</div>
-    <h2 class="rv">Internships and industry projects, mostly about getting data into a state people can use.</h2>
+    <h2 class="rv">Internships and industry projects, mostly about making data usable.</h2>
+    <p class="lead rv">At Muck Rack, she automated a manual cleanup of a 600K-record dataset. For her Apple capstone, she built a text-to-SQL dashboard over 1M+ records. For the European Central Bank and European Investment Bank, she built exposure models and the error checks behind them. At ClaBi in Seoul, she analyzed 2.5M+ system logs and built dashboards for weekly reviews.</p>
 
     <div class="rows">
       <article class="row static rv" id="r-muckrack" data-peek="muck">
         <div class="row-head">
           <div class="row-top"><div class="row-title">Product &amp; Market Analytics Intern<em>Muck Rack</em></div><div class="row-tag">MAY - AUG 2025</div></div>
-          <p class="row-desc">The team was cleaning a 600K-record dataset by hand. I built a pipeline that used the OpenAI Batch API on 50K+ labeled record pairs to find and correct errors. It fixed 4,700+ errors and cut the manual review that was needed. I also wrote validation checks that flagged inconsistencies across 4M record pairs, and worked with Sales, Product and Analytics to define the problem and break down the unclear data issues.</p>
+          <p class="row-desc">She automated a manual cleanup of a 600K-record dataset, using the OpenAI Batch API on 50K+ labeled record pairs to find and correct errors. The pipeline fixed 4,700+ errors and cut the manual review that was needed. She also wrote validation checks that flagged inconsistencies across 4M record pairs, and worked with Sales, Product and Analytics to define the problem.</p>
         </div>
         <div class="row-links"></div>
       </article>
@@ -401,7 +382,7 @@
       <article class="row static rv" id="r-apple" data-peek="apple">
         <div class="row-head">
           <div class="row-top"><div class="row-title">Product Analytics Analyst, Capstone<em>Apple</em></div><div class="row-tag">JAN - MAY 2025</div></div>
-          <p class="row-desc">I built a dashboard on Snowflake with a text-to-SQL interface, so leaders could ask questions about 1M+ records and 10+ KPIs in plain language. I automated the recurring KPI reports, which cut manual effort by 40%. I also built ranked reports showing each team's top three priorities, so leadership could compare teams against one standard.</p>
+          <p class="row-desc">She built a dashboard on Snowflake with a text-to-SQL interface, so leaders could ask questions about 1M+ records and 10+ KPIs in plain language. She automated the recurring KPI reports, cutting manual effort by 40%, and built ranked reports that showed each team's top three priorities so leadership could compare teams on one standard.</p>
         </div>
         <div class="row-links"></div>
       </article>
@@ -409,7 +390,7 @@
       <article class="row static rv" id="r-ecb" data-peek="ecb">
         <div class="row-head">
           <div class="row-top"><div class="row-title">Data Scientist (Risk Analytics), Industrial Project<em>ECB &amp; EIB</em></div><div class="row-tag">MAY - AUG 2025</div></div>
-          <p class="row-desc">I built models that estimated financial exposure of &euro;22M to &euro;49M across scenarios, and wrote Python checks to catch errors in the input data behind every reported figure. Where different methods gave different answers, I reconciled them into one consistent output. We presented the results to non-technical stakeholders.</p>
+          <p class="row-desc">She built models estimating financial exposure of &euro;22M to &euro;49M across scenarios, and wrote Python checks to catch errors in the input data behind every reported figure. Where different methods disagreed, she reconciled them into one consistent output. The team presented the results to non-technical stakeholders.</p>
         </div>
         <div class="row-links">
           <a href="https://www.linkedin.com/posts/seoyeontai_im-excited-to-have-presented-our-poster-activity-7378945125248458752-8c67?utm_source=share&amp;utm_medium=member_desktop&amp;rcm=ACoAAEFPqV0By1fPVgsSpObG_PY9uBTA9RpmoYA" target="_blank" rel="noopener">Project poster (LinkedIn) &rarr;</a>
@@ -419,7 +400,7 @@
       <article class="row static rv" id="r-clabi" data-peek="clabi">
         <div class="row-head">
           <div class="row-top"><div class="row-title">Data Analytics Intern<em>ClaBi, Seoul</em></div><div class="row-tag">MAR - JUL 2024</div></div>
-          <p class="row-desc">I used 2.5M+ system logs to map how work currently flowed and find bottlenecks, then worked with developers to fix the ones with the biggest impact. I built Tableau dashboards that leadership used in weekly business reviews to track KPIs and product health, and automated manual workflows, which improved accuracy by 15% and cut processing time by 30%.</p>
+          <p class="row-desc">She used 2.5M+ system logs to map how work currently flowed and find bottlenecks, then worked with developers to fix the ones with the biggest impact. She built Tableau dashboards that leadership used in weekly business reviews, and automated manual workflows, improving accuracy by 15% and cutting processing time by 30%.</p>
         </div>
         <div class="row-links"></div>
       </article>
@@ -431,8 +412,8 @@
 <section id="about">
   <div class="wrap">
     <div class="eyebrow rv"><span class="n">03</span>About</div>
-    <h2 class="rv">I like questions where the first answer is probably wrong.</h2>
-    <p class="lead rv">A coupon test that raises purchases but not revenue is a good example. My work so far has been SQL and Python analysis, experiment reanalysis, dashboards, and the data validation underneath them, across a master's program, three internships or industry projects in New York, and one startup internship in Seoul.</p>
+    <h2 class="rv">Questions where the first answer is probably wrong.</h2>
+    <p class="lead rv">Sandy is a data analyst with an M.S. in Business Analytics from Columbia University and a B.S. in Communications, with a minor in Computer Science, from the University of Utah. Her work covers SQL and Python analysis, experiment reanalysis, dashboards, and the data validation underneath them, across an internship and two industry projects in New York and an internship in Seoul. A coupon test that raises purchases but not revenue is the kind of problem she finds most interesting.</p>
     <dl class="plain rv">
       <dt>Education</dt>
       <dd>Columbia University, M.S. in Business Analytics, Dec 2025 (GPA 3.45)<br>University of Utah, B.S. in Communications, minor in Computer Science, Dec 2023 (GPA 3.4, Dean's List)</dd>
@@ -478,7 +459,6 @@
     ['artea','Artea experiment','proj',15,29,'r','5,000-customer coupon test','r-artea'],
     ['citi','Citi Bike','proj',8,45,'r','132K trips, next-hour outflow model','r-citi'],
     ['plan','Demand planning','proj',10,61,'r','10 SKUs, 30-week plan (simulated)','r-plan'],
-    ['price','Pricing','proj',17,79,'r','4 methods, 200 simulations','r-pricing'],
 
     ['muck','Muck Rack','exp',84,26,'l','600K-record cleanup','r-muckrack'],
     ['apple','Apple','exp',91,45,'l','Text-to-SQL dashboard, 10+ KPIs','r-apple'],
@@ -491,7 +471,6 @@
     ['exper','metric'],['metric','quality'],['quality','ml'],['metric','dash'],['dash','ml'],['exper','dash'],
     ['artea','exper','Coupon A/B test'],['artea','metric','Revenue metric tree in SQL'],['artea','dash','HTML/JavaScript dashboard'],
     ['citi','ml','Next-hour outflow model'],['citi','dash','Streamlit dashboard'],['citi','metric','Net flow per station'],
-    ['price','ml','Out-of-sample pricing models'],['price','exper','Simulation-based comparison'],
     ['muck','quality','Validation across 4M record pairs'],['muck','ml','AI-assisted record labeling'],
     ['apple','dash','Text-to-SQL dashboard'],['apple','metric','10+ KPIs on 1M+ records'],
     ['ecb','ml','Exposure models'],['ecb','quality','Input data error checks'],
@@ -633,7 +612,6 @@
     plan:['267 to 34','Projected shortage units after moving stock between same-SKU nodes (simulated data).'],
     artea:['-19.8%','Revenue per transaction, coupon vs. control. Purchase rate was up 1.70 pp.'],
     citi:['132K','Citi Bike trips analyzed, January 2018.'],
-    pricing:['200','Simulations across 4 pricing methods.'],
     muck:['4,700+','Errors corrected in a 600K-record cleanup.'],
     apple:['-40%','Manual effort on recurring KPI reports.'],
     ecb:['€22M to €49M','Estimated exposure across scenarios.'],
